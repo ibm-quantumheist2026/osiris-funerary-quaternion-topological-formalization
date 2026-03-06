@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+osiris/__init__.py
+osiris/__main__.py
+osiris/banner.py
+osiris/cli.py
+osiris/init_sequence.py
+osiris/quantum.py
+osiris/repl.py
+osiris/session.py
+osiris.egg-info/PKG-INFO
+osiris.egg-info/SOURCES.txt
+osiris.egg-info/dependency_links.txt
+osiris.egg-info/entry_points.txt
+osiris.egg-info/top_level.txt
+tests/test_osiris.py

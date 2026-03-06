@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "osiris"
+version = "5.3.0"
+description = "Omega System Integrated Runtime Intelligence System — Sovereign Quantum Intelligence CLI"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.scripts]
+osiris = "osiris.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["osiris*"]
