@@ -49,13 +49,18 @@ class TestQuantumTokenDiscovery(unittest.TestCase):
     def test_no_token_returns_none(self):
         from osiris.quantum import discover_ibm_quantum_token
 
-        with patch.dict(os.environ, {}, clear=False):
-            for var in ("IBM_QUANTUM_TOKEN", "QISKIT_IBM_TOKEN", "IBMQ_TOKEN"):
-                os.environ.pop(var, None)
+        # Use clear=True to avoid interference from real env vars;
+        # restore only non-token variables that the subprocess may need.
+        safe_env = {
+            k: v
+            for k, v in os.environ.items()
+            if k not in ("IBM_QUANTUM_TOKEN", "QISKIT_IBM_TOKEN", "IBMQ_TOKEN")
+        }
+        with patch.dict(os.environ, safe_env, clear=True):
             result = discover_ibm_quantum_token()
-            # May return None (no token set) or a value from a real config file;
-            # we only assert the type.
-            self.assertTrue(result is None or isinstance(result, str))
+        # May still find a token from a local config file on the test host;
+        # we only assert that the return type is correct.
+        self.assertTrue(result is None or isinstance(result, str))
 
     def test_env_var_ibm_quantum_token(self):
         from osiris.quantum import discover_ibm_quantum_token
@@ -117,8 +122,15 @@ class TestQuantumTokenDiscovery(unittest.TestCase):
     def test_redact_token_short(self):
         from osiris.quantum import redact_token
 
-        # 2-char token is treated as very short and fully masked
+        # Tokens with 8 or fewer characters are fully masked
         result = redact_token("ab")
+        self.assertEqual(result, "***")
+
+    def test_redact_token_exactly_eight(self):
+        from osiris.quantum import redact_token
+
+        # Exactly 8 chars is still fully masked (not > 8)
+        result = redact_token("abcdefgh")
         self.assertEqual(result, "***")
 
     def test_redact_token_very_short(self):

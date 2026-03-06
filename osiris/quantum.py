@@ -58,7 +58,12 @@ def _read_token_from_config(path: Path) -> Optional[str]:
 
 
 def redact_token(token: str) -> str:
-    """Return a partially redacted representation of a token string."""
-    if len(token) <= 8:
-        return token[:2] + "..." if len(token) > 2 else "***"
-    return token[:8] + "..."
+    """Return a partially redacted representation of a token string.
+
+    Tokens longer than 8 characters show the first 8 characters followed by
+    '...'.  Shorter tokens are fully masked as '***' to avoid leaking short
+    secrets.
+    """
+    if len(token) > 8:
+        return token[:8] + "..."
+    return "***"
